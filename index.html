@@ -1,0 +1,1989 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shivanshi — Creative Developer & Frontend Engineer</title>
+  <meta name="description"
+    content="Portfolio of Shivanshi, Creative Developer & Frontend Engineer specializing in cinematic web experiences, modern JavaScript, React, and interactive canvas design.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-main: #06070a;
+      --bg-card: rgba(18, 21, 31, 0.7);
+      --bg-card-hover: rgba(28, 33, 48, 0.85);
+      --border-subtle: rgba(255, 255, 255, 0.08);
+      --border-highlight: rgba(255, 255, 255, 0.18);
+      --accent-primary: #f59e0b;
+      /* Warm amber from video rim-light */
+      --accent-glow: rgba(245, 158, 11, 0.35);
+      --accent-cyan: #06b6d4;
+      /* Teal glow from video back-light */
+      --accent-indigo: #6366f1;
+      /* Creative indigo */
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-dim: #64748b;
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Plus Jakarta Sans', sans-serif;
+      --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      background-color: var(--bg-main);
+      color: var(--text-main);
+      font-family: var(--font-body);
+      overflow-x: hidden;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+    }
+
+    body {
+      width: 100%;
+      min-height: 100%;
+      background-color: var(--bg-main);
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* Sleek Scrollbar */
+    ::-webkit-scrollbar {
+      width: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(6, 7, 10, 0.8);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.18);
+      border-radius: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: var(--accent-primary);
+    }
+
+    /* Ambient background glowing orbs */
+    .ambient-glow {
+      position: fixed;
+      pointer-events: none;
+      border-radius: 50%;
+      filter: blur(140px);
+      z-index: 0;
+      opacity: 0.25;
+      transition: transform 0.5s ease;
+    }
+
+    .glow-amber {
+      top: 15%;
+      left: -10%;
+      width: 550px;
+      height: 550px;
+      background: radial-gradient(circle, #f59e0b, transparent 70%);
+    }
+
+    .glow-cyan {
+      top: 45%;
+      right: -10%;
+      width: 600px;
+      height: 600px;
+      background: radial-gradient(circle, #06b6d4, transparent 70%);
+    }
+
+    .glow-indigo {
+      bottom: 10%;
+      left: 20%;
+      width: 500px;
+      height: 500px;
+      background: radial-gradient(circle, #6366f1, transparent 70%);
+    }
+
+    /* Loading Progress Bar at very top */
+    #loader-bar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent-cyan), var(--accent-primary), var(--accent-indigo));
+      box-shadow: 0 0 12px var(--accent-primary);
+      z-index: 9999;
+      transition: width 0.12s ease-out, opacity 0.4s ease;
+      pointer-events: none;
+    }
+
+    #loader-bar.hidden {
+      opacity: 0;
+    }
+
+    /* Navbar */
+    .navbar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 5%;
+      z-index: 1000;
+      background: rgba(6, 7, 10, 0.5);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border-subtle);
+      transition: background 0.3s ease, border 0.3s ease;
+    }
+
+    .navbar.scrolled {
+      background: rgba(6, 7, 10, 0.88);
+      border-bottom-color: var(--border-highlight);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text-main);
+      font-family: var(--font-display);
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.02em;
+    }
+
+    .nav-brand .brand-badge {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(245, 158, 11, 0.12);
+      color: var(--accent-primary);
+      border: 1px solid rgba(245, 158, 11, 0.3);
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+
+    .nav-link {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      transition: color 0.2s ease, transform 0.2s ease;
+      position: relative;
+    }
+
+    .nav-link:hover {
+      color: var(--text-main);
+    }
+
+    .nav-link.active {
+      color: var(--accent-primary);
+    }
+
+    .nav-cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 20px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.9), rgba(217, 119, 6, 0.9));
+      color: #06070a;
+      font-weight: 600;
+      font-size: 0.88rem;
+      text-decoration: none;
+      box-shadow: 0 4px 20px rgba(245, 158, 11, 0.35);
+      transition: transform 0.2s var(--ease-out), box-shadow 0.2s ease;
+    }
+
+    .nav-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 26px rgba(245, 158, 11, 0.5);
+    }
+
+    /* Fixed Canvas Behind Scrollytelling Hero */
+    #canvas-viewport {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      display: block;
+      pointer-events: none;
+      z-index: 1;
+      opacity: 1;
+      transition: opacity 0.6s ease;
+    }
+
+    #canvas-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: radial-gradient(circle at center, rgba(6, 7, 10, 0.2) 0%, rgba(6, 7, 10, 0.75) 100%);
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity 0.4s ease;
+    }
+
+    /* Scrollytelling Container */
+    #story-container {
+      position: relative;
+      width: 100%;
+      height: 480vh;
+      z-index: 10;
+    }
+
+    /* Story Chapters pinned in center */
+    .story-overlay-wrapper {
+      position: sticky;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      padding: 0 24px;
+    }
+
+    .story-chapter {
+      position: absolute;
+      max-width: 860px;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(30px) scale(0.96);
+      transition: opacity 0.45s var(--ease-out), transform 0.45s var(--ease-out);
+      pointer-events: none;
+    }
+
+    .story-chapter.active {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .chapter-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 6px 16px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-highlight);
+      font-size: 0.8rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent-primary);
+      margin-bottom: 18px;
+    }
+
+    .chapter-tag .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 10px #10b981;
+      animation: pulse 2s infinite;
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+
+      50% {
+        transform: scale(1.3);
+        opacity: 0.6;
+      }
+    }
+
+    .chapter-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5.5vw, 4.8rem);
+      font-weight: 800;
+      line-height: 1.08;
+      letter-spacing: -0.03em;
+      margin-bottom: 20px;
+      background: linear-gradient(180deg, #ffffff 40%, rgba(255, 255, 255, 0.72) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+    }
+
+    .chapter-title .highlight {
+      background: linear-gradient(135deg, var(--accent-primary), #fb923c);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .chapter-subtitle {
+      font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+      font-weight: 400;
+      color: var(--text-muted);
+      line-height: 1.6;
+      max-width: 680px;
+      margin: 0 auto 30px;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.7);
+    }
+
+    .chapter-buttons {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 28px;
+      border-radius: 12px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      text-decoration: none;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: all 0.25s var(--ease-out);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent-primary), #d97706);
+      color: #050608;
+      box-shadow: 0 6px 24px rgba(245, 158, 11, 0.4);
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(245, 158, 11, 0.6);
+    }
+
+    .btn-glass {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-color: var(--border-highlight);
+      color: var(--text-main);
+    }
+
+    .btn-glass:hover {
+      background: rgba(255, 255, 255, 0.16);
+      border-color: rgba(255, 255, 255, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* Scroll Down Indicator */
+    .scroll-indicator {
+      position: absolute;
+      bottom: 35px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      color: var(--text-dim);
+      font-size: 0.76rem;
+      text-transform: uppercase;
+      letter-spacing: 0.15em;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      z-index: 20;
+    }
+
+    .scroll-mouse {
+      width: 20px;
+      height: 32px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 12px;
+      position: relative;
+    }
+
+    .scroll-wheel {
+      width: 3px;
+      height: 6px;
+      background: var(--accent-primary);
+      border-radius: 2px;
+      position: absolute;
+      top: 6px;
+      left: 50%;
+      transform: translateX(-50%);
+      animation: wheelMove 1.6s infinite ease-in-out;
+    }
+
+    @keyframes wheelMove {
+      0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+      }
+
+      40% {
+        opacity: 1;
+      }
+
+      80% {
+        opacity: 0;
+        transform: translate(-50%, 10px);
+      }
+
+      100% {
+        opacity: 0;
+        transform: translate(-50%, 10px);
+      }
+    }
+
+    /* Floating Playback HUD Controller */
+    .hud-controller {
+      position: fixed;
+      bottom: 28px;
+      right: 28px;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px 16px;
+      border-radius: 999px;
+      background: rgba(14, 17, 26, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-highlight);
+      box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5), 0 0 20px rgba(245, 158, 11, 0.15);
+      transition: all 0.3s var(--ease-out);
+    }
+
+    .hud-controller:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+    }
+
+    .hud-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-main);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .hud-btn:hover {
+      background: var(--accent-primary);
+      color: #06070a;
+      transform: scale(1.08);
+      border-color: var(--accent-primary);
+    }
+
+    .hud-btn.active {
+      background: var(--accent-primary);
+      color: #06070a;
+    }
+
+    .hud-timeline {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .hud-slider {
+      width: 130px;
+      height: 4px;
+      -webkit-appearance: none;
+      appearance: none;
+      background: rgba(255, 255, 255, 0.15);
+      border-radius: 2px;
+      outline: none;
+      cursor: pointer;
+      transition: background 0.2s ease;
+    }
+
+    .hud-slider:hover {
+      background: rgba(255, 255, 255, 0.3);
+    }
+
+    .hud-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      box-shadow: 0 0 8px var(--accent-primary);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+    }
+
+    .hud-slider::-webkit-slider-thumb:hover {
+      transform: scale(1.3);
+    }
+
+    .hud-frame-label {
+      font-family: monospace;
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      min-width: 62px;
+      text-align: right;
+    }
+
+    /* Content sections following the hero story */
+    .content-wrapper {
+      position: relative;
+      z-index: 20;
+      background: linear-gradient(180deg, transparent 0%, rgba(6, 7, 10, 0.95) 120px, #06070a 100%);
+      padding: 100px 5% 60px;
+      min-height: 100vh;
+    }
+
+    .section-container {
+      max-width: 1200px;
+      margin: 0 auto 120px;
+      position: relative;
+    }
+
+    .section-header {
+      margin-bottom: 50px;
+    }
+
+    .section-pill {
+      display: inline-block;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent-primary);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 3.8vw, 3.2rem);
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1.15;
+    }
+
+    .section-description {
+      font-size: 1.05rem;
+      color: var(--text-muted);
+      max-width: 640px;
+      margin-top: 14px;
+      line-height: 1.6;
+    }
+
+    /* About Grid */
+    .about-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 40px;
+      align-items: center;
+    }
+
+    .about-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-subtle);
+      border-radius: 24px;
+      padding: 38px;
+      transition: border-color 0.3s ease, transform 0.3s ease;
+    }
+
+    .about-card:hover {
+      border-color: var(--border-highlight);
+      transform: translateY(-3px);
+    }
+
+    .about-lead {
+      font-size: 1.3rem;
+      font-weight: 600;
+      line-height: 1.5;
+      color: var(--text-main);
+      margin-bottom: 18px;
+    }
+
+    .about-text {
+      color: var(--text-muted);
+      line-height: 1.7;
+      margin-bottom: 24px;
+      font-size: 0.98rem;
+    }
+
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+      margin-top: 30px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .stat-item h4 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: var(--accent-primary);
+    }
+
+    .stat-item p {
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-top: 4px;
+    }
+
+    .about-pillars {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .pillar-card {
+      background: rgba(18, 21, 31, 0.5);
+      border: 1px solid var(--border-subtle);
+      border-radius: 18px;
+      padding: 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+      transition: all 0.3s ease;
+    }
+
+    .pillar-card:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--border-highlight);
+      transform: translateX(6px);
+    }
+
+    .pillar-icon {
+      width: 46px;
+      height: 46px;
+      border-radius: 12px;
+      background: rgba(245, 158, 11, 0.12);
+      border: 1px solid rgba(245, 158, 11, 0.25);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      color: var(--accent-primary);
+      flex-shrink: 0;
+    }
+
+    .pillar-card:nth-child(2) .pillar-icon {
+      background: rgba(6, 182, 212, 0.12);
+      border-color: rgba(6, 182, 212, 0.25);
+      color: var(--accent-cyan);
+    }
+
+    .pillar-card:nth-child(3) .pillar-icon {
+      background: rgba(99, 102, 241, 0.12);
+      border-color: rgba(99, 102, 241, 0.25);
+      color: var(--accent-indigo);
+    }
+
+    .pillar-content h3 {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+    }
+
+    .pillar-content p {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* Projects Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+    }
+
+    .project-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 22px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      transition: all 0.35s var(--ease-out);
+      position: relative;
+    }
+
+    .project-card:hover {
+      border-color: rgba(245, 158, 11, 0.4);
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4), 0 0 30px rgba(245, 158, 11, 0.1);
+    }
+
+    .project-banner {
+      height: 190px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #111420 0%, #1a1e30 100%);
+    }
+
+    .project-card:nth-child(1) .project-banner {
+      background: radial-gradient(circle at 80% 20%, rgba(245, 158, 11, 0.25), #111420 75%);
+    }
+
+    .project-card:nth-child(2) .project-banner {
+      background: radial-gradient(circle at 20% 20%, rgba(6, 182, 212, 0.25), #111420 75%);
+    }
+
+    .project-card:nth-child(3) .project-banner {
+      background: radial-gradient(circle at 80% 80%, rgba(99, 102, 241, 0.25), #111420 75%);
+    }
+
+    .project-card:nth-child(4) .project-banner {
+      background: radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.2), #111420 75%);
+    }
+
+    .project-graphic {
+      font-size: 3.2rem;
+      transition: transform 0.4s var(--ease-out);
+    }
+
+    .project-card:hover .project-graphic {
+      transform: scale(1.12) rotate(4deg);
+    }
+
+    .project-body {
+      padding: 26px;
+      display: flex;
+      flex-direction: column;
+      flex-grow: 1;
+    }
+
+    .project-tags {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 14px;
+    }
+
+    .tag {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-subtle);
+      color: var(--text-muted);
+    }
+
+    .project-title {
+      font-family: var(--font-display);
+      font-size: 1.45rem;
+      font-weight: 700;
+      margin-bottom: 10px;
+      color: var(--text-main);
+    }
+
+    .project-desc {
+      font-size: 0.92rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 22px;
+      flex-grow: 1;
+    }
+
+    .project-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 18px;
+      border-top: 1px solid var(--border-subtle);
+    }
+
+    .project-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      color: var(--accent-primary);
+      text-decoration: none;
+      transition: gap 0.2s ease, color 0.2s ease;
+    }
+
+    .project-link:hover {
+      gap: 10px;
+      color: #fbbf24;
+    }
+
+    .project-github {
+      color: var(--text-muted);
+      font-size: 1.1rem;
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .project-github:hover {
+      color: var(--text-main);
+    }
+
+    /* Skills Grid */
+    .skills-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .skill-category {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 20px;
+      padding: 28px;
+    }
+
+    .category-name {
+      font-family: var(--font-display);
+      font-size: 1.15rem;
+      font-weight: 700;
+      margin-bottom: 18px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .skill-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .skill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--border-subtle);
+      font-size: 0.86rem;
+      font-weight: 500;
+      color: var(--text-main);
+      transition: all 0.2s ease;
+    }
+
+    .skill-badge:hover {
+      background: rgba(245, 158, 11, 0.12);
+      border-color: rgba(245, 158, 11, 0.35);
+      transform: translateY(-2px);
+    }
+
+    /* Contact & Connect Section */
+    .contact-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-subtle);
+      border-radius: 26px;
+      padding: 48px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-card::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -20%;
+      width: 400px;
+      height: 400px;
+      background: radial-gradient(circle, rgba(245, 158, 11, 0.15), transparent 70%);
+      pointer-events: none;
+    }
+
+    .contact-info h3 {
+      font-family: var(--font-display);
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+    }
+
+    .contact-info p {
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 30px;
+      font-size: 1rem;
+    }
+
+    .contact-channels {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .channel-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      color: var(--text-main);
+      text-decoration: none;
+      padding: 12px 18px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--border-subtle);
+      transition: all 0.2s ease;
+      font-size: 0.94rem;
+    }
+
+    .channel-item:hover {
+      background: rgba(255, 255, 255, 0.08);
+      border-color: var(--accent-primary);
+      transform: translateX(4px);
+    }
+
+    .contact-form {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .form-group label {
+      font-size: 0.84rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .form-control {
+      background: rgba(6, 7, 10, 0.6);
+      border: 1px solid var(--border-subtle);
+      border-radius: 12px;
+      padding: 13px 16px;
+      color: var(--text-main);
+      font-family: inherit;
+      font-size: 0.95rem;
+      outline: none;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .form-control:focus {
+      border-color: var(--accent-primary);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 110px;
+    }
+
+    /* Toast Notification */
+    #toast-msg {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: rgba(16, 185, 129, 0.92);
+      backdrop-filter: blur(12px);
+      color: #06070a;
+      font-weight: 600;
+      padding: 12px 24px;
+      border-radius: 999px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      z-index: 10000;
+      transition: transform 0.4s var(--ease-out), opacity 0.4s ease;
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    #toast-msg.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    /* Footer */
+    footer {
+      border-top: 1px solid var(--border-subtle);
+      padding: 40px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: var(--text-dim);
+      font-size: 0.88rem;
+      max-width: 1300px;
+      margin: 0 auto;
+    }
+
+    .footer-links {
+      display: flex;
+      gap: 20px;
+    }
+
+    .footer-link {
+      color: var(--text-dim);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-link:hover {
+      color: var(--text-main);
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+
+      .about-grid,
+      .contact-card {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+
+      .nav-links {
+        display: none;
+      }
+
+      .hud-controller {
+        bottom: 16px;
+        right: 16px;
+        padding: 6px 12px;
+      }
+
+      .hud-slider {
+        width: 80px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * {
+        animation: none !important;
+        transition: none !important;
+      }
+
+      html {
+        scroll-behavior: auto;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Loading Line -->
+  <div id="loader-bar"></div>
+
+  <!-- Ambient Glow Orbs -->
+  <div class="ambient-glow glow-amber"></div>
+  <div class="ambient-glow glow-cyan"></div>
+  <div class="ambient-glow glow-indigo"></div>
+
+  <!-- Top Navigation -->
+  <nav class="navbar" id="navbar">
+    <a href="#story" class="nav-brand">
+      Shivanshi<span style="color:var(--accent-primary)">.</span>
+      <span class="brand-badge">Creative Dev</span>
+    </a>
+
+    <ul class="nav-links">
+      <li><a href="#story" class="nav-link active">Story</a></li>
+      <li><a href="#about" class="nav-link">About</a></li>
+      <li><a href="#projects" class="nav-link">Projects</a></li>
+      <li><a href="#skills" class="nav-link">Skills</a></li>
+      <li><a href="#contact" class="nav-link">Contact</a></li>
+    </ul>
+
+    <a href="#contact" class="nav-cta">
+      <span>Get in Touch</span>
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round" stroke-linejoin="round">
+        <path d="M5 12h14"></path>
+        <path d="m12 5 7 7-7 7"></path>
+      </svg>
+    </a>
+  </nav>
+
+  <!-- Canvas Pinned in Background -->
+  <canvas id="canvas-viewport"></canvas>
+  <div id="canvas-overlay"></div>
+
+  <!-- Hero & Scrollytelling Track -->
+  <div id="story">
+    <div id="story-container">
+      <div class="story-overlay-wrapper">
+
+        <!-- Chapter 1: Introduction (Frames 1-60) -->
+        <div class="story-chapter active" id="chapter-1">
+          <div class="chapter-tag">
+            <span class="status-dot"></span>
+            <span>Interactive Visual Experience</span>
+          </div>
+          <h1 class="chapter-title">Hi, I'm <span class="highlight">Shivanshi</span></h1>
+          <p class="chapter-subtitle">
+            Creative Frontend Developer & AI Tinkerer crafting fluid, immersive web interfaces where code meets
+            cinematic storytelling.
+          </p>
+          <div class="chapter-buttons">
+            <a href="#projects" class="btn btn-primary">
+              <span>View Projects</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M5 12h14M12 5l7 7-7 7" />
+              </svg>
+            </a>
+            <a href="#about" class="btn btn-glass">
+              <span>Explore Story</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Chapter 2: Craft & Engineering (Frames 61-130) -->
+        <div class="story-chapter" id="chapter-2">
+          <div class="chapter-tag">
+            <span>Engineering & Design</span>
+          </div>
+          <h2 class="chapter-title">Blending <span class="highlight">Precision</span> with Fluid Motion</h2>
+          <p class="chapter-subtitle">
+            Harnessing 60 FPS HTML5 canvas pipelines, modern CSS, and reactive state architecture to deliver
+            ultra-smooth micro-interactions.
+          </p>
+          <div class="chapter-buttons">
+            <a href="#skills" class="btn btn-primary">
+              <span>Explore My Stack</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Chapter 3: Digital Products (Frames 131-190) -->
+        <div class="story-chapter" id="chapter-3">
+          <div class="chapter-tag">
+            <span>Full-Stack & Systems</span>
+          </div>
+          <h2 class="chapter-title">Architecting <span class="highlight">Modern</span> Web Applications</h2>
+          <p class="chapter-subtitle">
+            From smart reservation systems like HotelSync to virtual queue orchestrators like Queueless, building
+            intuitive tools that scale.
+          </p>
+          <div class="chapter-buttons">
+            <a href="#projects" class="btn btn-primary">
+              <span>Discover Featured Work</span>
+            </a>
+          </div>
+        </div>
+
+        <!-- Chapter 4: Vision & Call To Action (Frames 191-240) -->
+        <div class="story-chapter" id="chapter-4">
+          <div class="chapter-tag">
+            <span>Let's Build Together</span>
+          </div>
+          <h2 class="chapter-title">Ready to Create the <span class="highlight">Next Big Thing?</span></h2>
+          <p class="chapter-subtitle">
+            Scroll down to explore my full project showcase, technical skill set, or drop a line to collaborate on
+            something extraordinary.
+          </p>
+          <div class="chapter-buttons">
+            <a href="#about" class="btn btn-primary">
+              <span>Enter Portfolio</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                <path d="M12 5v14M5 12l7 7 7-7" />
+              </svg>
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Scroll Mouse Cue -->
+      <div class="scroll-indicator" id="scroll-cue">
+        <div class="scroll-mouse">
+          <div class="scroll-wheel"></div>
+        </div>
+        <span>Scroll to scrub</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Floating Playback HUD Controller -->
+  <div class="hud-controller" id="hud" title="Animation Player & Timeline Scrubber">
+    <!-- Play / Pause Button -->
+    <button class="hud-btn" id="btn-play" aria-label="Play or Pause Animation">
+      <svg id="icon-play" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M8 5v14l11-7z" />
+      </svg>
+      <svg id="icon-pause" width="16" height="16" viewBox="0 0 24 24" fill="currentColor" style="display:none;">
+        <path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z" />
+      </svg>
+    </button>
+
+    <!-- Timeline Scrubber -->
+    <div class="hud-timeline">
+      <input type="range" min="1" max="240" value="1" class="hud-slider" id="hud-scrubber"
+        aria-label="Timeline Scrubber">
+      <span class="hud-frame-label" id="hud-frame-num">001/240</span>
+    </div>
+
+    <!-- Loop Toggle -->
+    <button class="hud-btn active" id="btn-loop" title="Toggle Looping">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+        <path d="M17 1l4 4-4 4"></path>
+        <path d="M3 11V9a4 4 0 0 1 4-4h14"></path>
+        <path d="M7 23l-4-4 4-4"></path>
+        <path d="M21 13v2a4 4 0 0 1-4 4H3"></path>
+      </svg>
+    </button>
+
+    <!-- Ambient Audio Synth Toggle -->
+    <button class="hud-btn" id="btn-sound" title="Toggle Ethereal Ambient Sound">
+      <svg id="icon-sound-off" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2">
+        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+        <line x1="23" y1="9" x2="17" y2="15"></line>
+        <line x1="17" y1="9" x2="23" y2="15"></line>
+      </svg>
+      <svg id="icon-sound-on" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+        stroke-width="2" style="display:none;">
+        <path d="M11 5L6 9H2v6h4l5 4V5z"></path>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
+      </svg>
+    </button>
+  </div>
+
+  <!-- Content Section Wrapper (About, Projects, Skills, Contact) -->
+  <main class="content-wrapper">
+
+    <!-- About Section -->
+    <section class="section-container" id="about">
+      <div class="section-header">
+        <span class="section-pill">About Me</span>
+        <h2 class="section-title">Design Thinker.<br>Code Craftsman.</h2>
+        <p class="section-description">
+          I bridge the gap between creative visual artistry and resilient frontend engineering, turning concepts into
+          production-ready web apps.
+        </p>
+      </div>
+
+      <div class="about-grid">
+        <div class="about-card">
+          <p class="about-lead">
+            "Every pixel has purpose, every interaction should spark joy."
+          </p>
+          <p class="about-text">
+            I'm Shivanshi, a software developer passionate about building interactive, human-centered digital
+            experiences. With expertise spanning React, modern CSS animation, Canvas rendering, and modern web
+            architectures, I focus on crafting apps that are both blazingly fast and visually captivating.
+          </p>
+          <p class="about-text">
+            When I'm not coding, I'm experimenting with generative visual synthesis, exploring design trends, and tuning
+            front-end performance down to the millisecond.
+          </p>
+
+          <div class="stats-row">
+            <div class="stat-item">
+              <h4>240</h4>
+              <p>Frames Scrubbed</p>
+            </div>
+            <div class="stat-item">
+              <h4>60fps</h4>
+              <p>Canvas Rendering</p>
+            </div>
+            <div class="stat-item">
+              <h4>100%</h4>
+              <p>Craft & Focus</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="about-pillars">
+          <div class="pillar-card">
+            <div class="pillar-icon">✨</div>
+            <div class="pillar-content">
+              <h3>Cinematic Storytelling</h3>
+              <p>Designing interactive web narratives with scroll-driven frame interpolation and buttery LERP easing.
+              </p>
+            </div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon">⚡</div>
+            <div class="pillar-content">
+              <h3>High-Performance Web</h3>
+              <p>Optimized asset pipelines, minimal bundle footprints, and high-efficiency DOM updates.</p>
+            </div>
+          </div>
+
+          <div class="pillar-card">
+            <div class="pillar-icon">🧠</div>
+            <div class="pillar-content">
+              <h3>AI & Creative Frontiers</h3>
+              <p>Embracing generative AI, multimodal media, and next-generation interactive toolchains.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Projects Section -->
+    <section class="section-container" id="projects">
+      <div class="section-header">
+        <span class="section-pill">Portfolio Showcase</span>
+        <h2 class="section-title">Featured Creations</h2>
+        <p class="section-description">
+          A selection of projects exploring real-time software, visual elegance, and pragmatic problem solving.
+        </p>
+      </div>
+
+      <div class="projects-grid">
+        <!-- Project 1: HotelSync -->
+        <article class="project-card">
+          <div class="project-banner">
+            <div class="project-graphic">🏨</div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="tag">React</span>
+              <span class="tag">Tailwind CSS</span>
+              <span class="tag">Hospitality</span>
+            </div>
+            <h3 class="project-title">HotelSync</h3>
+            <p class="project-desc">
+              A comprehensive hotel management and reservation web app featuring seamless room discovery, booking
+              workflows, and modern guest dashboards.
+            </p>
+            <div class="project-footer">
+              <a href="https://github.com/Shivanshi-04/HotelSync" target="_blank" rel="noopener" class="project-link">
+                <span>View Repository</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <a href="https://github.com/Shivanshi-04/HotelSync" target="_blank" rel="noopener" class="project-github"
+                title="GitHub">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 2: Art Gallery -->
+        <article class="project-card">
+          <div class="project-banner">
+            <div class="project-graphic">🎨</div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="tag">React</span>
+              <span class="tag">Tailwind CSS</span>
+              <span class="tag">Aesthetics</span>
+            </div>
+            <h3 class="project-title">Art Gallery</h3>
+            <p class="project-desc">
+              An aesthetic digital art showcase featuring clean masonry grids, high-fidelity modal previews, and smooth
+              theme transitions designed for modern creators.
+            </p>
+            <div class="project-footer">
+              <a href="https://github.com/Shivanshi-04/Art-Gallery" target="_blank" rel="noopener" class="project-link">
+                <span>View Repository</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <a href="https://github.com/Shivanshi-04/Art-Gallery" target="_blank" rel="noopener"
+                class="project-github" title="GitHub">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 3: Queueless -->
+        <article class="project-card">
+          <div class="project-banner">
+            <div class="project-graphic">⏱️</div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="tag">Node.js</span>
+              <span class="tag">React</span>
+              <span class="tag">Real-Time</span>
+            </div>
+            <h3 class="project-title">Queueless</h3>
+            <p class="project-desc">
+              A smart virtual queuing platform that eliminates physical waiting times through live SMS updates, slot
+              reservations, and real-time progress trackers.
+            </p>
+            <div class="project-footer">
+              <a href="https://github.com/Shivanshi-04/Queueless" target="_blank" rel="noopener" class="project-link">
+                <span>View Repository</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <a href="https://github.com/Shivanshi-04/Queueless" target="_blank" rel="noopener" class="project-github"
+                title="GitHub">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                  <path
+                    d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+                </svg>
+              </a>
+            </div>
+          </div>
+        </article>
+
+        <!-- Project 4: Cinematic Scrollytelling Engine -->
+        <article class="project-card">
+          <div class="project-banner">
+            <div class="project-graphic">🎬</div>
+          </div>
+          <div class="project-body">
+            <div class="project-tags">
+              <span class="tag">HTML5 Canvas</span>
+              <span class="tag">WebGL/Audio</span>
+              <span class="tag">Scrollytelling</span>
+            </div>
+            <h3 class="project-title">Cinematic Canvas Engine</h3>
+            <p class="project-desc">
+              A 240-frame 60 FPS interactive sequence engine with subpixel LERP interpolation, timeline scrub HUD,
+              preloading fallback, and Web Audio synthesizer.
+            </p>
+            <div class="project-footer">
+              <a href="#story" class="project-link">
+                <span>Experience Demo</span>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M5 12h14M12 5l7 7-7 7" />
+                </svg>
+              </a>
+              <span class="tag" style="color:var(--accent-primary)">Active</span>
+            </div>
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- Skills & Technologies -->
+    <section class="section-container" id="skills">
+      <div class="section-header">
+        <span class="section-pill">Technical Arsenal</span>
+        <h2 class="section-title">Skills & Technologies</h2>
+        <p class="section-description">
+          A modern stack focused on speed, maintainability, and exceptional frontend UX.
+        </p>
+      </div>
+
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3 class="category-name">
+            <span style="color:var(--accent-primary)">⚡</span> Frontend Core
+          </h3>
+          <div class="skill-badges">
+            <span class="skill-badge">React</span>
+            <span class="skill-badge">Next.js</span>
+            <span class="skill-badge">JavaScript (ESNext)</span>
+            <span class="skill-badge">TypeScript</span>
+            <span class="skill-badge">HTML5 Semantic</span>
+            <span class="skill-badge">Tailwind CSS</span>
+            <span class="skill-badge">Modern CSS / Grid</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3 class="category-name">
+            <span style="color:var(--accent-cyan)">🎨</span> Creative & Motion
+          </h3>
+          <div class="skill-badges">
+            <span class="skill-badge">HTML5 2D Canvas</span>
+            <span class="skill-badge">Scroll-driven Animations</span>
+            <span class="skill-badge">Inertial LERP Easing</span>
+            <span class="skill-badge">Glassmorphism UI</span>
+            <span class="skill-badge">Web Audio API</span>
+            <span class="skill-badge">Responsive Layouts</span>
+          </div>
+        </div>
+
+        <div class="skill-category">
+          <h3 class="category-name">
+            <span style="color:var(--accent-indigo)">🛠️</span> Tools & Architecture
+          </h3>
+          <div class="skill-badges">
+            <span class="skill-badge">Git & GitHub</span>
+            <span class="skill-badge">Vite</span>
+            <span class="skill-badge">Node.js</span>
+            <span class="skill-badge">REST APIs</span>
+            <span class="skill-badge">Performance Tuning</span>
+            <span class="skill-badge">Chrome DevTools</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Contact & Connect Section -->
+    <section class="section-container" id="contact">
+      <div class="contact-card">
+        <div class="contact-info">
+          <span class="section-pill">Let's Connect</span>
+          <h3>Ready to start your next chapter?</h3>
+          <p>
+            Whether you have an upcoming project, are looking for a creative developer, or simply want to say hi — my
+            inbox is always open.
+          </p>
+
+          <div class="contact-channels">
+            <a href="https://github.com/Shivanshi-04" target="_blank" rel="noopener" class="channel-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M12 0C5.37 0 0 5.37 0 12c0 5.31 3.435 9.795 8.205 11.385.6.105.825-.255.825-.57 0-.285-.015-1.23-.015-2.235-3.015.555-3.795-.735-4.035-1.41-.135-.345-.72-1.41-1.23-1.695-.42-.225-1.02-.78-.015-.795.945-.015 1.62.87 1.845 1.23 1.08 1.815 2.805 1.305 3.495.99.105-.78.42-1.305.765-1.605-2.67-.3-5.46-1.335-5.46-5.925 0-1.305.465-2.385 1.23-3.225-.12-.3-.54-1.53.12-3.18 0 0 1.005-.315 3.3 1.23.96-.27 1.98-.405 3-.405s2.04.135 3 .405c2.295-1.56 3.3-1.23 3.3-1.23.66 1.65.24 2.88.12 3.18.765.84 1.23 1.905 1.23 3.225 0 4.605-2.805 5.625-5.475 5.925.435.375.81 1.095.81 2.22 0 1.605-.015 2.895-.015 3.3 0 .315.225.69.825.57A12.02 12.02 0 0024 12c0-6.63-5.37-12-12-12z" />
+              </svg>
+              <span>github.com/Shivanshi-04</span>
+            </a>
+            <a href="mailto:contact@shivanshi.dev" class="channel-item">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect width="20" height="16" x="2" y="4" rx="2"></rect>
+                <path d="m22 7-8.97 5.7a1.94 1.94 0 0 1-2.06 0L2 7"></path>
+              </svg>
+              <span>contact@shivanshi.dev</span>
+            </a>
+          </div>
+        </div>
+
+        <form class="contact-form" id="contact-form">
+          <div class="form-group">
+            <label for="contact-name">Your Name</label>
+            <input type="text" id="contact-name" class="form-control" placeholder="Shivanshi" required>
+          </div>
+          <div class="form-group">
+            <label for="contact-email">Email Address</label>
+            <input type="email" id="contact-email" class="form-control" placeholder="hello@example.com" required>
+          </div>
+          <div class="form-group">
+            <label for="contact-msg">Message</label>
+            <textarea id="contact-msg" class="form-control" placeholder="Tell me about your project or vision..."
+              required></textarea>
+          </div>
+          <button type="submit" class="btn btn-primary" style="justify-content:center; margin-top:6px;">
+            <span>Send Message</span>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+          </button>
+        </form>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Toast Message -->
+  <div id="toast-msg">✨ Message sent successfully! I'll get back to you soon.</div>
+
+  <!-- Footer -->
+  <footer>
+    <p>© 2026 Shivanshi. Crafted with passion, code & 240 frames.</p>
+    <div class="footer-links">
+      <a href="#story" class="footer-link">Top</a>
+      <a href="#about" class="footer-link">About</a>
+      <a href="#projects" class="footer-link">Projects</a>
+      <a href="https://github.com/Shivanshi-04" target="_blank" rel="noopener" class="footer-link">GitHub</a>
+    </div>
+  </footer>
+
+  <!-- Script Engine -->
+  <script>
+    (function () {
+      const TOTAL_FRAMES = 240;
+      const canvas = document.getElementById('canvas-viewport');
+      const ctx = canvas.getContext('2d', { alpha: false });
+      const loaderBar = document.getElementById('loader-bar');
+      const navbar = document.getElementById('navbar');
+      const scrollCue = document.getElementById('scroll-cue');
+      const canvasOverlay = document.getElementById('canvas-overlay');
+
+      // HUD elements
+      const btnPlay = document.getElementById('btn-play');
+      const iconPlay = document.getElementById('icon-play');
+      const iconPause = document.getElementById('icon-pause');
+      const hudScrubber = document.getElementById('hud-scrubber');
+      const hudFrameNum = document.getElementById('hud-frame-num');
+      const btnLoop = document.getElementById('btn-loop');
+      const btnSound = document.getElementById('btn-sound');
+      const iconSoundOff = document.getElementById('icon-sound-off');
+      const iconSoundOn = document.getElementById('icon-sound-on');
+
+      // Chapters
+      const chapter1 = document.getElementById('chapter-1');
+      const chapter2 = document.getElementById('chapter-2');
+      const chapter3 = document.getElementById('chapter-3');
+      const chapter4 = document.getElementById('chapter-4');
+
+      // Animation State
+      const images = new Array(TOTAL_FRAMES + 1);
+      let loadedCount = 0;
+      let targetFrame = 1;
+      let currentFrame = 1;
+      let lastRenderedIndex = -1;
+      let isPlaying = false;
+      let isLooping = true;
+      let isAudioActive = false;
+      let audioCtx = null;
+      let ambientOsc1 = null;
+      let ambientOsc2 = null;
+      let ambientGain = null;
+      const PLAY_FPS = 30;
+      let lastFrameTime = performance.now();
+
+      // URL Generator
+      function getFrameUrl(index) {
+        const padded = String(index).padStart(3, '0');
+        return `file:///c:/Users/shivanshi/Downloads/ezgif-825f0dfc07760665-jpg/ezgif-frame-${padded}.jpg`;
+      }
+
+      // Responsive High-DPI Canvas
+      function resizeCanvas() {
+        const dpr = window.devicePixelRatio || 1;
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        renderFrame(Math.round(currentFrame), true);
+      }
+      window.addEventListener('resize', resizeCanvas, { passive: true });
+
+      // Image Cover Drawing
+      function drawCover(img) {
+        if (!img || !img.complete || img.naturalWidth === 0) return;
+
+        const cw = canvas.width;
+        const ch = canvas.height;
+        const nw = img.naturalWidth;
+        const nh = img.naturalHeight;
+
+        const scale = Math.max(cw / nw, ch / nh);
+        const sw = nw * scale;
+        const sh = nh * scale;
+        const sx = (cw - sw) / 2;
+        const sy = (ch - sh) / 2;
+
+        ctx.drawImage(img, 0, 0, nw, nh, sx, sy, sw, sh);
+      }
+
+      // Safe retrieval with fallback to nearest loaded frame
+      function getUsableImage(frameIndex) {
+        frameIndex = Math.max(1, Math.min(TOTAL_FRAMES, frameIndex));
+        if (images[frameIndex] && images[frameIndex].complete && images[frameIndex].naturalWidth > 0) {
+          return images[frameIndex];
+        }
+        for (let delta = 1; delta <= TOTAL_FRAMES; delta++) {
+          const prev = frameIndex - delta;
+          if (prev >= 1 && images[prev] && images[prev].complete && images[prev].naturalWidth > 0) {
+            return images[prev];
+          }
+          const next = frameIndex + delta;
+          if (next <= TOTAL_FRAMES && images[next] && images[next].complete && images[next].naturalWidth > 0) {
+            return images[next];
+          }
+        }
+        return null;
+      }
+
+      function renderFrame(frameIndex, force = false) {
+        if (!force && frameIndex === lastRenderedIndex) return;
+
+        const img = getUsableImage(frameIndex);
+        if (img) {
+          drawCover(img);
+          lastRenderedIndex = frameIndex;
+        }
+
+        // Update HUD display
+        hudScrubber.value = frameIndex;
+        hudFrameNum.textContent = `${String(frameIndex).padStart(3, '0')}/${TOTAL_FRAMES}`;
+      }
+
+      // Update Active Chapter based on frame position
+      function updateChapters(frame) {
+        chapter1.classList.toggle('active', frame >= 1 && frame < 60);
+        chapter2.classList.toggle('active', frame >= 60 && frame < 130);
+        chapter3.classList.toggle('active', frame >= 130 && frame < 190);
+        chapter4.classList.toggle('active', frame >= 190 && frame <= TOTAL_FRAMES);
+
+        if (scrollCue) {
+          scrollCue.style.opacity = frame > 25 ? '0' : '1';
+        }
+      }
+
+      // Scroll Handling
+      function onScroll() {
+        const scrollTop = window.scrollY || window.pageYOffset || 0;
+        const storyContainer = document.getElementById('story-container');
+        const storyHeight = storyContainer.offsetHeight - window.innerHeight;
+
+        // Navbar appearance
+        if (scrollTop > 60) {
+          navbar.classList.add('scrolled');
+        } else {
+          navbar.classList.remove('scrolled');
+        }
+
+        // Scrollytelling scrub (only when not actively playing via HUD)
+        if (!isPlaying && storyHeight > 0) {
+          const fraction = Math.min(Math.max(scrollTop / storyHeight, 0), 1);
+          targetFrame = 1 + fraction * (TOTAL_FRAMES - 1);
+        }
+
+        // Canvas dimming as user enters content wrapper
+        if (scrollTop > storyHeight) {
+          const dimFraction = Math.min((scrollTop - storyHeight) / 500, 1);
+          canvas.style.opacity = Math.max(0.12, 1 - dimFraction * 0.88);
+          canvasOverlay.style.opacity = 1 - dimFraction * 0.4;
+        } else {
+          canvas.style.opacity = 1;
+          canvasOverlay.style.opacity = 1;
+        }
+      }
+      window.addEventListener('scroll', onScroll, { passive: true });
+
+      // Animation Loop with LERP
+      const LERP_FACTOR = 0.12;
+
+      function animationTick(now) {
+        if (isPlaying) {
+          const elapsed = now - lastFrameTime;
+          const frameInterval = 1000 / PLAY_FPS;
+
+          if (elapsed >= frameInterval) {
+            lastFrameTime = now - (elapsed % frameInterval);
+            targetFrame += 1;
+
+            if (targetFrame > TOTAL_FRAMES) {
+              if (isLooping) {
+                targetFrame = 1;
+                currentFrame = 1;
+              } else {
+                targetFrame = TOTAL_FRAMES;
+                setPlaying(false);
+              }
+            }
+            currentFrame = targetFrame;
+          }
+        } else {
+          const diff = targetFrame - currentFrame;
+          if (Math.abs(diff) > 0.001) {
+            currentFrame += diff * LERP_FACTOR;
+          } else {
+            currentFrame = targetFrame;
+          }
+        }
+
+        const rounded = Math.round(currentFrame);
+        renderFrame(rounded);
+        updateChapters(rounded);
+
+        requestAnimationFrame(animationTick);
+      }
+
+      // HUD Play / Pause Control
+      function setPlaying(state) {
+        isPlaying = state;
+        if (isPlaying) {
+          iconPlay.style.display = 'none';
+          iconPause.style.display = 'block';
+          btnPlay.classList.add('active');
+        } else {
+          iconPlay.style.display = 'block';
+          iconPause.style.display = 'none';
+          btnPlay.classList.remove('active');
+        }
+      }
+
+      btnPlay.addEventListener('click', () => {
+        if (!isPlaying && targetFrame >= TOTAL_FRAMES) {
+          targetFrame = 1;
+          currentFrame = 1;
+        }
+        setPlaying(!isPlaying);
+      });
+
+      // HUD Scrubber Seek
+      hudScrubber.addEventListener('input', (e) => {
+        setPlaying(false);
+        const val = parseInt(e.target.value, 10);
+        targetFrame = val;
+        currentFrame = val;
+        renderFrame(val, true);
+        updateChapters(val);
+      });
+
+      // HUD Loop Toggle
+      btnLoop.addEventListener('click', () => {
+        isLooping = !isLooping;
+        btnLoop.classList.toggle('active', isLooping);
+      });
+
+      // Synthesized Ethereal Web Audio
+      function initAmbientAudio() {
+        if (audioCtx) return;
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        audioCtx = new AudioContext();
+
+        ambientGain = audioCtx.createGain();
+        ambientGain.gain.setValueAtTime(0.001, audioCtx.currentTime);
+
+        ambientOsc1 = audioCtx.createOscillator();
+        ambientOsc1.type = 'sine';
+        ambientOsc1.frequency.setValueAtTime(174.61, audioCtx.currentTime); // F3 note
+
+        ambientOsc2 = audioCtx.createOscillator();
+        ambientOsc2.type = 'triangle';
+        ambientOsc2.frequency.setValueAtTime(261.63, audioCtx.currentTime); // C4 note
+
+        const filter = audioCtx.createBiquadFilter();
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(450, audioCtx.currentTime);
+
+        ambientOsc1.connect(filter);
+        ambientOsc2.connect(filter);
+        filter.connect(ambientGain);
+        ambientGain.connect(audioCtx.destination);
+
+        ambientOsc1.start();
+        ambientOsc2.start();
+      }
+
+      btnSound.addEventListener('click', () => {
+        initAmbientAudio();
+        if (!isAudioActive) {
+          if (audioCtx && audioCtx.state === 'suspended') {
+            audioCtx.resume();
+          }
+          ambientGain.gain.exponentialRampToValueAtTime(0.09, audioCtx.currentTime + 1.2);
+          isAudioActive = true;
+          iconSoundOff.style.display = 'none';
+          iconSoundOn.style.display = 'block';
+          btnSound.classList.add('active');
+        } else {
+          ambientGain.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.6);
+          isAudioActive = false;
+          iconSoundOff.style.display = 'block';
+          iconSoundOn.style.display = 'none';
+          btnSound.classList.remove('active');
+        }
+      });
+
+      // Keyboard Controls (Space = Play/Pause, Left/Right = Frame Seek)
+      window.addEventListener('keydown', (e) => {
+        if (['input', 'textarea'].includes(document.activeElement.tagName.toLowerCase())) return;
+
+        if (e.code === 'Space') {
+          e.preventDefault();
+          setPlaying(!isPlaying);
+        } else if (e.code === 'ArrowRight') {
+          setPlaying(false);
+          targetFrame = Math.min(TOTAL_FRAMES, targetFrame + 4);
+        } else if (e.code === 'ArrowLeft') {
+          setPlaying(false);
+          targetFrame = Math.max(1, targetFrame - 4);
+        }
+      });
+
+      // Preload image frames
+      function initPreloading() {
+        const firstImg = new Image();
+        firstImg.src = getFrameUrl(1);
+        images[1] = firstImg;
+
+        firstImg.onload = () => {
+          loadedCount++;
+          resizeCanvas();
+          renderFrame(1, true);
+        };
+
+        for (let i = 1; i <= TOTAL_FRAMES; i++) {
+          if (i === 1) continue;
+
+          const img = new Image();
+          img.src = getFrameUrl(i);
+          images[i] = img;
+
+          const onFinish = () => {
+            loadedCount++;
+            const pct = Math.round((loadedCount / TOTAL_FRAMES) * 100);
+            loaderBar.style.width = pct + '%';
+
+            if (loadedCount >= TOTAL_FRAMES) {
+              setTimeout(() => {
+                loaderBar.classList.add('hidden');
+              }, 300);
+            }
+          };
+
+          img.onload = onFinish;
+          img.onerror = onFinish;
+        }
+      }
+
+      // Contact Form Submission Demo
+      const contactForm = document.getElementById('contact-form');
+      const toastMsg = document.getElementById('toast-msg');
+
+      if (contactForm) {
+        contactForm.addEventListener('submit', (e) => {
+          e.preventDefault();
+          toastMsg.classList.add('show');
+          contactForm.reset();
+          setTimeout(() => {
+            toastMsg.classList.remove('show');
+          }, 3500);
+        });
+      }
+
+      // Start everything
+      resizeCanvas();
+      onScroll();
+      initPreloading();
+      requestAnimationFrame(animationTick);
+    })();
+  </script>
+</body>
+
+</html>
